@@ -35,7 +35,7 @@ function component(width, height, color, x, y) {
     this.height = height;
     this.speedX = 0;
     this.speedY = 0;
-    this.gravityAcceleration = 10;
+    this.gravityAcceleration = 1;
     this.gravitySpeedDifferential = 0;
     this.x = x;
     this.y = y;
@@ -52,11 +52,13 @@ function component(width, height, color, x, y) {
             if (this.y < 0) { //if above canvas
                 this.y = 0;
             }
+            if (this.y > groundLevel) { // if below ground level
+                this.y = groundLevel;
+                this.speedY = 0;
+            }
         } else { //not in air
             this.y += this.speedY;
-            if (this.y > groundLevel) { //if below ground level
-                this.y = groundLevel;
-            }
+
         }
     }
 }
@@ -64,16 +66,18 @@ function component(width, height, color, x, y) {
 function updateGameArea() {
     myGameArea.clear();
     myGamePiece.speedX = 0;
-    myGamePiece.speedY = 0;
+    //myGamePiece.speedY = 0;
     if (myGameArea.key && myGameArea.key == 37) { myGamePiece.speedX = -20; } //left
     if (myGameArea.key && myGameArea.key == 39) { myGamePiece.speedX = 20; } //right
     // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
     // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
-    //add if statement: so you can't jump while already in air
-    if (myGameArea.key && myGameArea.key == 32) { //jump
-        myGamePiece.speedY = -100;
-        //reset gravitySpeedDifferential
-        myGamePiece.gravitySpeedDifferential = 0;
+    
+    if (myGamePiece.y >= groundLevel) {//so you can't jump while already in air
+        if (myGameArea.key && myGameArea.key == 32) { //jump
+            myGamePiece.speedY = -20;
+            //reset gravitySpeedDifferential
+            myGamePiece.gravitySpeedDifferential = 0;
+        }
     }
 
     myGamePiece.newPos();
