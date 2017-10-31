@@ -17,11 +17,13 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
+        this.keys = {};
         window.addEventListener('keydown', function (e) {
-            myGameArea.key = e.keyCode;
+            myGameArea.keys = (myGameArea.keys || []);
+            myGameArea.keys[e.keyCode] = true;
         })
         window.addEventListener('keyup', function (e) {
-            myGameArea.key = false;
+            myGameArea.keys[e.keyCode] = false;
         })
     },
     clear: function () {
@@ -67,13 +69,13 @@ function updateGameArea() {
     myGameArea.clear();
     myGamePiece.speedX = 0;
     //myGamePiece.speedY = 0;
-    if (myGameArea.key && myGameArea.key == 37) { myGamePiece.speedX = -20; } //left
-    if (myGameArea.key && myGameArea.key == 39) { myGamePiece.speedX = 20; } //right
+    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -20; }
+    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 20; }
     // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
     // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
-    
+
     if (myGamePiece.y >= groundLevel) {//so you can't jump while already in air
-        if (myGameArea.key && myGameArea.key == 32) { //jump
+        if (myGameArea.keys && myGameArea.keys[32]) { //jump
             myGamePiece.speedY = -20;
             //reset gravitySpeedDifferential
             myGamePiece.gravitySpeedDifferential = 0;
