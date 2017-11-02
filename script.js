@@ -13,14 +13,14 @@ function startGame() {
     myGameArea.start();
     //parameters: width, height, color, x, y
     var height = 30;
-    myGamePiece = new component(height, 30, "red", 10, GROUND_LEVEL - height - 1);
+    myGamePiece = new component(height, height, "red", 10, GROUND_LEVEL - height);
     //myObstacle = new component(10, 200, "green", 300, 120);
     ground = new component(400, 10, "green", 0, 400);
-    groundTwo = new component(800, 20, "green", 0, 400);
+    groundTwo = new component(400, 20, "green", 400, 400);
 
     //replace
     temporaryGroundArr.push(ground);
-    temporaryGroundArr.push(groundTwo);
+    temporaryGroundArr.push(ground);
 }
 
 var myGameArea = {
@@ -45,119 +45,40 @@ var myGameArea = {
     }
 }
 
-function component(width, height, color, x, y) {
-    this.gamearea = myGameArea;
-    this.width = width;
-    this.height = height;
-    this.speedX = 0;
-    this.speedY = 0;
-    this.gravityAcceleration = 1;
-    this.gravitySpeedDifferential = 0;
-    this.x = x;
-    this.y = y;
-    this.update = function () {
-        ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-    this.newPos = function () {
-        var myBottom = this.y + this.height;
-        this.x += this.speedX;
-        
-        this.getGROUND_LEVEL(temporaryGroundArr);
-        
-        if (myBottom < GROUND_LEVEL) { // if in air
-            this.gravitySpeedDifferential += this.gravityAcceleration;
-            this.y += this.speedY + this.gravitySpeedDifferential;
-            if (this.y < 0) { //if above canvas
-                this.y = 0;
-            }
-
-        } else { //not in air
-            this.y += this.speedY;
-        }
-        if (myBottom > GROUND_LEVEL) { // if below ground level
-            this.y = GROUND_LEVEL - this.height;
-            this.speedY = 0;
-        }
-    }
-    this.crashWith = function (otherobj) {
-        var myleft = this.x;
-        var myright = this.x + (this.width);
-        var mytop = this.y;
-        var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
-        var othertop = otherobj.y;
-        var otherbottom = otherobj.y + (otherobj.height);
-        var crash = true;
-        // if myRight < yourRight && myBottom > yourTop
-        if ((mybottom < othertop) ||
-            (mytop > otherbottom) ||
-            (myright < otherleft) ||
-            (myleft > otherright)) {
-            crash = false;
-        }
-        return crash;
-    }
-    this.getGROUND_LEVEL = function (groundArr) {
-        var pieceLeft = this.x;
-        var pieceRight = this.x + this.width;
-        var pieceTop = this.y;
-        var pieceBottom = this.y + this.height;
-        //search for objects within the myleft and myright range below gamePiece that is lower than mybottom
-        var currentGroundPieces = [];
-        groundArr.forEach(function (obj, i) {
-            var groundLeft = obj.x;
-            var groundRight = obj.x + obj.width;
-            var groundTop = obj.y;
-            if (pieceRight > groundLeft &&
-                pieceLeft < groundRight &&
-                groundTop > pieceTop) {
-                currentGroundPieces.push(obj);
-            }
-        });
-        //groundPiece with highest groundTop  = GROUND_LEVEL
-        var highestGround = currentGroundPieces.reduce(function(acc, groundPiece, i) {
-            if( acc.y < groundPiece.y) {
-                acc = groundPiece;
-            } 
-            return acc;
-        }, currentGroundPieces[0]);
-        console.log('highestGround');
-        console.log(highestGround);
-        
-    }
-}
-
 function updateGameArea() {
     myGamePiece.speedX = 0;
     //myGamePiece.speedY = 0;
-    // if (myGamePiece.crashWith(myObstacle)) {
-    //     
-    // } 
-    // else {
-    if (myGameArea.keys && myGameArea.keys[37]) { myGamePiece.speedX = -20; }
-    if (myGameArea.keys && myGameArea.keys[39]) { myGamePiece.speedX = 20; }
-    // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
-    // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
+    //MOVE LEFT RIGHT
+    if (crashWithGround(temporaryGroundArr) == false) {
 
-    if (myGamePiece.y + myGamePiece.height >= GROUND_LEVEL) {//so you can't jump while already in air
-        if (myGameArea.keys && myGameArea.keys[32]) { //jump
+        if (myGameArea.keys && myGameArea.keys[37]) { myGamePiece.speedX = -20; }
+        if (myGameArea.keys && myGameArea.keys[39]) { myGamePiece.speedX = 20; }
+        // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
+        // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
+    }
+    //JUMP
+    if (myGamePiece.y + myGamePiece.height >= GROUND_LEVEL) { //if at or below ground level
+        //so you can't jump while already in air
+        if (myGameArea.keys && myGameArea.keys[32]) { //JUMP
             myGamePiece.speedY = -20;
             //reset gravitySpeedDifferential
             myGamePiece.gravitySpeedDifferential = 0;
         }
     }
-
     myGameArea.clear();
     ground.update();
     groundTwo.update();
     myGamePiece.newPos();
     myGamePiece.update();
-    //}
 }
-
+function crashWithGround(groundArray) {
+    for (var i = 0; i < groundArray.length; i++) {
+        if (myGamePiece.crashWith(groundArray[i]) == true) {
+            return true;
+        }
+    }
+    return false;
+}
 //PLAN
 //1. draw land 
 //2. land collision function:
