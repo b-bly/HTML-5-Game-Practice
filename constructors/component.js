@@ -9,6 +9,7 @@ function component(width, height, color, x, y) {
     this.gravitySpeedDifferential = 0;
     this.x = x;
     this.y = y;
+    this.groundLevel = 400;
     this.update = function () {
         ctx = myGameArea.context;
         ctx.fillStyle = color;
@@ -17,18 +18,18 @@ function component(width, height, color, x, y) {
     this.newPos = function () {
         var myBottom = this.y + this.height;
         this.x += this.speedX;
-        this.getGROUND_LEVEL(temporaryGroundArr);
+        
         //for initial jump
         //shouldn't need this if statement, only the next one with gravity written like:
         //myBottom <= GROUND_Level
         // but I get a weird
         //vibrating of the square if I don't include this.
-        if (myBottom == GROUND_LEVEL) {
+        if (myBottom == this.groundLevel) {
             this.y += this.speedY;
         }
         // if in air, let speed and gravity change its position
         
-        if (myBottom < GROUND_LEVEL) {
+        if (myBottom < this.groundLevel) {
             this.y += this.speedY + this.gravitySpeedDifferential;
             this.gravitySpeedDifferential += this.gravityAcceleration;
             if (this.y < 0) { //if above canvas
@@ -36,8 +37,8 @@ function component(width, height, color, x, y) {
             }
         }
         // if below ground level, it should stop falling and return to ground level.
-        if (myBottom > GROUND_LEVEL) {
-            this.y = GROUND_LEVEL - this.height;
+        if (myBottom > this.groundLevel) {
+            this.y = this.groundLevel - this.height;
             this.speedY = 0;
             this.gravitySpeedDifferential = 0;
         }
@@ -85,6 +86,7 @@ function component(width, height, color, x, y) {
             }
             return acc;
         }, currentGroundPieces[0]);
+        this.groundLevel = highestGround.y;
         console.log('highestGround');
         console.log(highestGround);
 

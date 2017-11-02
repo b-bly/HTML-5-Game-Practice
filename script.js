@@ -16,7 +16,7 @@ function startGame() {
     myGamePiece = new component(height, height, "red", 10, GROUND_LEVEL - height);
     //myObstacle = new component(10, 200, "green", 300, 120);
     ground = new component(400, 10, "green", 0, 400);
-    groundTwo = new component(400, 20, "green", 400, 400);
+    groundTwo = new component(400, 50, "green", 400, 400);
 
     //replace
     temporaryGroundArr.push(ground);
@@ -53,11 +53,15 @@ function updateGameArea() {
 
         if (myGameArea.keys && myGameArea.keys[37]) { myGamePiece.speedX = -20; }
         if (myGameArea.keys && myGameArea.keys[39]) { myGamePiece.speedX = 20; }
+        //test ground level function: 71 = G key
+        if (myGameArea.keys && myGameArea.keys[71]) {
+            myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
+        }
         // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
         // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
     }
     //JUMP
-    if (myGamePiece.y + myGamePiece.height >= GROUND_LEVEL) { //if at or below ground level
+    if (myGamePiece.y + myGamePiece.height >= myGamePiece.groundLevel) { //if at or below ground level
         //so you can't jump while already in air
         if (myGameArea.keys && myGameArea.keys[32]) { //JUMP
             myGamePiece.speedY = -20;
