@@ -18,7 +18,7 @@ function component(width, height, color, x, y) {
     this.newPos = function () {
         var myBottom = this.y + this.height;
         this.x += this.speedX;
-        
+
         //for initial jump
         //shouldn't need this if statement, only the next one with gravity written like:
         //myBottom <= GROUND_Level
@@ -28,7 +28,7 @@ function component(width, height, color, x, y) {
             this.y += this.speedY;
         }
         // if in air, let speed and gravity change its position
-        
+
         if (myBottom < this.groundLevel) {
             this.y += this.speedY + this.gravitySpeedDifferential;
             this.gravitySpeedDifferential += this.gravityAcceleration;
@@ -62,6 +62,51 @@ function component(width, height, color, x, y) {
         }
         return crash;
     }
+    this.hitWall = function (otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = false;
+        //if it hits the right side, then back game piece off to be flush with the edge.
+        if (myright > otherleft && mytop) {
+            this.x = otherleft;
+            return 'right';
+        } else if (myleft < otherright) {
+            this.x = otherright
+            return 'left';
+        }
+        //hits left side
+    }
+    
+    this.collide = function (r2) { //r2 == ground 
+        var r1 = this;
+        var dx = (r1.x + r1.width / 2) - (r2.x + r2.width / 2);
+        var dy = (r1.y + r1.height / 2) - (r2.y + r2.height / 2);
+        var width = (r1.width + r2.width) / 2;
+        var height = (r1.height + r2.height) / 2;
+        var crossWidth = width * dy;
+        var crossHeight = height * dx;
+        var collision = 'none';
+        //
+        if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
+            if (crossWidth > crossHeight) { //'bottom' of r2.  All refer to r2
+                collision = (crossWidth > (-crossHeight)) ? 'bottom' : 'left';
+            } else {
+                collision = (crossWidth > -(crossHeight)) ? 'right' : 'top';
+            }
+        }
+        if (collision == 'left') console.log('collision = left');
+        if (collision == 'right') console.log('collision = right');
+
+        if (collision == 'left') this.x = r2.x - this.width - 1;
+        if (collision == 'right') this.x = r2.x + r2.width + 1;
+        return (collision);
+    }
     this.getGROUND_LEVEL = function (groundArr) {
         var pieceLeft = this.x;
         var pieceRight = this.x + this.width;
@@ -87,8 +132,5 @@ function component(width, height, color, x, y) {
             return acc;
         }, currentGroundPieces[0]);
         this.groundLevel = highestGround.y;
-        console.log('highestGround');
-        console.log(highestGround);
-
     }
 }

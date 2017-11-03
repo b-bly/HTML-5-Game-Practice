@@ -1,4 +1,3 @@
-console.log('script loaded');
 
 //modified from https://www.w3schools.com/graphics/game_intro.asp
 var myGamePiece;
@@ -8,19 +7,23 @@ var temporaryGroundArr = [];
 
 //replace ground vars with ground = []
 var GROUND_LEVEL = 400;
+var BOTTOM = 410;
 
 function startGame() {
     myGameArea.start();
     //parameters: width, height, color, x, y
     var height = 30;
-    myGamePiece = new component(height, height, "red", 10, GROUND_LEVEL - height);
+    var width = 30;
+    myGamePiece = new component(width, height, "red", 10, GROUND_LEVEL - height);
     //myObstacle = new component(10, 200, "green", 300, 120);
-    ground = new component(400, 10, "green", 0, 400);
-    groundTwo = new component(400, 50, "green", 400, 400);
+    height = 10, width = 400;
+    ground = new component(width, height, "green", 0, BOTTOM - height);
+    height = 50, width = 400;
+    groundTwo = new component(width, height, "green", 400, BOTTOM - height);
 
     //replace
     temporaryGroundArr.push(ground);
-    temporaryGroundArr.push(ground);
+    temporaryGroundArr.push(groundTwo);
 }
 
 var myGameArea = {
@@ -47,19 +50,29 @@ var myGameArea = {
 
 function updateGameArea() {
     myGamePiece.speedX = 0;
+    myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
     //myGamePiece.speedY = 0;
     //MOVE LEFT RIGHT
-    if (crashWithGround(temporaryGroundArr) == false) {
-
-        if (myGameArea.keys && myGameArea.keys[37]) { myGamePiece.speedX = -20; }
-        if (myGameArea.keys && myGameArea.keys[39]) { myGamePiece.speedX = 20; }
-        //test ground level function: 71 = G key
-        if (myGameArea.keys && myGameArea.keys[71]) {
-            myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
+    //*****need to distinguish between left and right crashes.  Right now I can't
+    //move after a collision***
+    //37 = left, 39 = right
+    var hitsGround = crashWithGround(temporaryGroundArr);
+        if (myGameArea.keys && myGameArea.keys[37] && hitsGround !== 'right') { //right refers to ground side
+            myGamePiece.speedX = -20; 
         }
-        // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
-        // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
+        if (myGameArea.keys && myGameArea.keys[39] && hitsGround !== 'left') { 
+            myGamePiece.speedX = 20; 
+        }
+     
+    //test ground level function: 71 = G key
+    if (myGameArea.keys && myGameArea.keys[71]) {
+        //myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
+        console.log('hitsGround');
+        console.log(hitsGround);
     }
+    // if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -1; } //down
+    // if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 1; } //up
+
     //JUMP
     if (myGamePiece.y + myGamePiece.height >= myGamePiece.groundLevel) { //if at or below ground level
         //so you can't jump while already in air
@@ -75,10 +88,13 @@ function updateGameArea() {
     myGamePiece.newPos();
     myGamePiece.update();
 }
+
 function crashWithGround(groundArray) {
     for (var i = 0; i < groundArray.length; i++) {
-        if (myGamePiece.crashWith(groundArray[i]) == true) {
-            return true;
+        var collision = myGamePiece.collide(groundArray[i]);
+        if (collision != 'none') {
+            if (collision == 'right') return 'right';
+            if (collision == 'left') return 'left';
         }
     }
     return false;
