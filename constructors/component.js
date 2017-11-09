@@ -15,9 +15,7 @@ function component(width, height, color, x, y) {
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
-    this.newPos = function () {
-      
+    this.newPos = function () {    
         this.x += this.speedX;
-
     }
 }

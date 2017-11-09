@@ -54,6 +54,7 @@ var myGameArea = {
     }
 }
 
+//the game loop
 function updateGameArea() {
     //stop all components from moving in x directions.
     allComponents.forEach(function (component, i) {
@@ -133,3 +134,9 @@ function crashWithGround(groundArray) {
 
 //Scroll background when player moves.
 //Make sprite for character.
+
+//Site organization:
+
+//projects
+//links - github etc
+//contact?
