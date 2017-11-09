@@ -43,45 +43,7 @@ function component(width, height, color, x, y) {
             this.gravitySpeedDifferential = 0;
         }
     }
-    this.crashWith = function (otherobj) {
-        var myleft = this.x;
-        var myright = this.x + (this.width);
-        var mytop = this.y;
-        var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
-        var othertop = otherobj.y;
-        var otherbottom = otherobj.y + (otherobj.height);
-        var crash = true;
-        // if myRight < yourRight && myBottom > yourTop
-        if ((mybottom <= othertop) ||
-            (mytop >= otherbottom) ||
-            (myright <= otherleft) ||
-            (myleft >= otherright)) {
-            crash = false;
-        }
-        return crash;
-    }
-    this.hitWall = function (otherobj) {
-        var myleft = this.x;
-        var myright = this.x + (this.width);
-        var mytop = this.y;
-        var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
-        var othertop = otherobj.y;
-        var otherbottom = otherobj.y + (otherobj.height);
-        var crash = false;
-        //if it hits the right side, then back game piece off to be flush with the edge.
-        if (myright > otherleft && mytop) {
-            this.x = otherleft;
-            return 'right';
-        } else if (myleft < otherright) {
-            this.x = otherright
-            return 'left';
-        }
-        //hits left side
-    }
+
     
     this.collide = function (r2) { //r2 == ground 
         var r1 = this;

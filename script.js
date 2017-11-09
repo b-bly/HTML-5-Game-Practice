@@ -3,6 +3,7 @@
 var myGamePiece;
 var ground;
 var groundTwo;
+var background;
 var temporaryGroundArr = [];
 
 //replace ground vars with ground = []
@@ -21,6 +22,8 @@ function startGame() {
     height = 50, width = 400;
     groundTwo = new component(width, height, "green", 400, BOTTOM - height);
 
+    height = 40, width = 200;
+    background = new component(width, height, "gray", 400, BOTTOM/2);
     //replace
     temporaryGroundArr.push(ground);
     temporaryGroundArr.push(groundTwo);
@@ -87,6 +90,7 @@ function updateGameArea() {
     groundTwo.update();
     myGamePiece.newPos();
     myGamePiece.update();
+    background.update();
 }
 
 function crashWithGround(groundArray) {
@@ -99,9 +103,16 @@ function crashWithGround(groundArray) {
     }
     return false;
 }
-//PLAN
-//1. draw land 
-//2. land collision function:
-    // if you run into a wall, you need to jump over it.  If crashing on x value, speedX = 0
-    // how to handle different y values of ground level for character
-//3. replace 
+//Next steps:
+
+//Add background
+
+//separate ground into:
+    //mainGround component
+    //array of groundPieces
+//the mainGround will not be passed to the crashWithGround function
+//pass mainGround to check for ground level?  or just set to ground level default if no other groundPiece
+//is under the player?
+
+//Scroll background when player moves.
+//Make sprite for character.
