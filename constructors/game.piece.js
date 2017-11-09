@@ -44,7 +44,7 @@ function gamePiece(width, height, color, x, y) {
         }
     }
 
-    
+
     this.collide = function (r2) { //r2 == ground 
         var r1 = this;
         var dx = (r1.x + r1.width / 2) - (r2.x + r2.width / 2);
@@ -65,8 +65,9 @@ function gamePiece(width, height, color, x, y) {
         if (collision == 'left') console.log('collision = left');
         if (collision == 'right') console.log('collision = right');
 
-        if (collision == 'left') this.x = r2.x - this.width - 1;
-        if (collision == 'right') this.x = r2.x + r2.width + 1;
+        //needed to comment these out or the ground pushes the cube back.
+        // if (collision == 'left') this.x = r2.x - this.width - 1;
+        // if (collision == 'right') this.x = r2.x + r2.width + 1;
         return (collision);
     }
     this.getGROUND_LEVEL = function (groundArr) {
@@ -81,18 +82,23 @@ function gamePiece(width, height, color, x, y) {
             var groundRight = obj.x + obj.width;
             var groundTop = obj.y;
             if (pieceRight > groundLeft &&
-                pieceLeft < groundRight &&
-                groundTop > pieceTop) {
+                pieceLeft < groundRight 
+                ) { //do i need the groundTop statement?
                 currentGroundPieces.push(obj);
             }
         });
         //groundPiece with highest groundTop  = GROUND_LEVEL
-        var highestGround = currentGroundPieces.reduce(function (acc, groundPiece, i) {
-            if (acc.y < groundPiece.y) {
-                acc = groundPiece;
-            }
-            return acc;
-        }, currentGroundPieces[0]);
-        this.groundLevel = highestGround.y;
+        if (currentGroundPieces) {
+            var highestGround = currentGroundPieces.reduce(function (acc, groundPiece, i) {
+                if (acc.y > groundPiece.y) { //REMEMBER higher y is lower on screen
+                    acc = groundPiece;
+                }
+                return acc;
+            }, currentGroundPieces[0]);
+            this.groundLevel = highestGround.y;
+        } else {
+            this.groundLevel = GROUND_LEVEL;
+        }
+        
     }
 }

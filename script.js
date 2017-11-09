@@ -70,13 +70,13 @@ function updateGameArea() {
     var hitsGround = crashWithGround(temporaryGroundArr);
     if (myGameArea.keys && myGameArea.keys[37] && hitsGround !== 'right') { //right refers to ground side
         allComponents.forEach(function (component, i) {
-            component.speedX = 20;
+            component.speedX = 5;
         });
 
     }
     if (myGameArea.keys && myGameArea.keys[39] && hitsGround !== 'left') {
         allComponents.forEach(function (component, i) {
-            component.speedX = -20;
+            component.speedX = -5;
         });
     }
 
@@ -98,6 +98,7 @@ function updateGameArea() {
             myGamePiece.gravitySpeedDifferential = 0;
         }
     }
+    //find new positions and redraw the game area.
     myGameArea.clear();
 
     myGamePiece.newPos();
