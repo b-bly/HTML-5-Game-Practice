@@ -5,6 +5,7 @@ var ground;
 var groundTwo;
 var background;
 var temporaryGroundArr = [];
+var allComponents = [];
 
 //replace ground vars with ground = []
 var GROUND_LEVEL = 400;
@@ -15,7 +16,7 @@ function startGame() {
     //parameters: width, height, color, x, y
     var height = 30;
     var width = 30;
-    myGamePiece = new component(width, height, "red", 10, GROUND_LEVEL - height);
+    myGamePiece = new gamePiece(width, height, "red", 100, GROUND_LEVEL - height);
     //myObstacle = new component(10, 200, "green", 300, 120);
     height = 10, width = 400;
     ground = new component(width, height, "green", 0, BOTTOM - height);
@@ -23,10 +24,12 @@ function startGame() {
     groundTwo = new component(width, height, "green", 400, BOTTOM - height);
 
     height = 40, width = 200;
-    background = new component(width, height, "gray", 400, BOTTOM/2);
+    background = new component(width, height, "gray", 400, BOTTOM / 2);
     //replace
     temporaryGroundArr.push(ground);
     temporaryGroundArr.push(groundTwo);
+
+    allComponents = [ground, groundTwo, background];
 }
 
 var myGameArea = {
@@ -52,21 +55,31 @@ var myGameArea = {
 }
 
 function updateGameArea() {
-    myGamePiece.speedX = 0;
+    //stop all components from moving in x directions.
+    allComponents.forEach(function (component, i) {
+        component.speedX = 0;
+    })
+
+
     myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
     //myGamePiece.speedY = 0;
+
     //MOVE LEFT RIGHT
-    //*****need to distinguish between left and right crashes.  Right now I can't
-    //move after a collision***
+    //move all components except game piece if there is no horizontal collision.
     //37 = left, 39 = right
     var hitsGround = crashWithGround(temporaryGroundArr);
-        if (myGameArea.keys && myGameArea.keys[37] && hitsGround !== 'right') { //right refers to ground side
-            myGamePiece.speedX = -20; 
-        }
-        if (myGameArea.keys && myGameArea.keys[39] && hitsGround !== 'left') { 
-            myGamePiece.speedX = 20; 
-        }
-     
+    if (myGameArea.keys && myGameArea.keys[37] && hitsGround !== 'right') { //right refers to ground side
+        allComponents.forEach(function (component, i) {
+            component.speedX = 20;
+        });
+
+    }
+    if (myGameArea.keys && myGameArea.keys[39] && hitsGround !== 'left') {
+        allComponents.forEach(function (component, i) {
+            component.speedX = -20;
+        });
+    }
+
     //test ground level function: 71 = G key
     if (myGameArea.keys && myGameArea.keys[71]) {
         //myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
@@ -86,11 +99,14 @@ function updateGameArea() {
         }
     }
     myGameArea.clear();
-    ground.update();
-    groundTwo.update();
+
     myGamePiece.newPos();
     myGamePiece.update();
-    background.update();
+    allComponents.forEach(function (component, i) {
+        component.newPos();
+        component.update();
+    });
+    
 }
 
 function crashWithGround(groundArray) {
