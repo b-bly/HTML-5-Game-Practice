@@ -3,13 +3,15 @@
 var myGamePiece;
 var ground;
 var groundTwo;
-var background;
+var foreground, foregroundTwo, foregroundThree, background, backgroundTwo;
 var temporaryGroundArr = [];
 var allComponents = [];
 
 //replace ground vars with ground = []
 var GROUND_LEVEL = 400;
-var BOTTOM = 410;
+//the foreground image is supposed to be 200px high.  
+//When bottom = 888 it looks like the game piece is sitting right at ground level.
+var BOTTOM = 888;
 
 function startGame() {
     myGameArea.start();
@@ -17,19 +19,34 @@ function startGame() {
     var height = 30;
     var width = 30;
     myGamePiece = new gamePiece(width, height, "red", 100, GROUND_LEVEL - height);
+
+
     //myObstacle = new component(10, 200, "green", 300, 120);
     height = 10, width = 400;
     ground = new component(width, height, "green", 0, BOTTOM - height);
-    height = 50, width = 400;
+
+    
+
+    height = 50, width = 2000;
     groundTwo = new component(width, height, "green", 400, BOTTOM - height);
 
-    height = 40, width = 200;
-    background = new component(width, height, "gray", 400, BOTTOM / 2);
+    height = 1000, width = 1000;
+    background = new image(width, height, 'forest/Trees.png', 0, 0, 'image');
+    height = 1000, width = 1000;
+    backgroundTwo = new image(width, height, 'forest/Trees.png', 1000, 0, 'image');
+
+    height = 200, width = 1000;
+    foreground = new image(width, height, 'forest/grass.png', 0, 800, 'image');
+    height = 200, width = 1000;
+    foregroundTwo = new image(width, height, 'forest/grass.png', 1000, 800, 'image');
+    height = 200, width = 1000;
+    foregroundThree = new image(width, height, 'forest/grass.png', 1000, 688, 'image');
+    //if I define backgroundTwo below background, it throws an error
+    
     //replace
     temporaryGroundArr.push(ground);
     temporaryGroundArr.push(groundTwo);
-
-    allComponents = [ground, groundTwo, background];
+    allComponents = [background, backgroundTwo, ground, groundTwo, foreground, foregroundTwo, foregroundThree];
 }
 
 var myGameArea = {
@@ -60,6 +77,7 @@ function updateGameArea() {
     allComponents.forEach(function (component, i) {
         component.speedX = 0;
     })
+    
 
 
     myGamePiece.getGROUND_LEVEL(temporaryGroundArr);
@@ -101,14 +119,14 @@ function updateGameArea() {
     }
     //find new positions and redraw the game area.
     myGameArea.clear();
-
-    myGamePiece.newPos();
-    myGamePiece.update();
+//the order the update functions are called determines what image is in front of what
+   
     allComponents.forEach(function (component, i) {
         component.newPos();
         component.update();
     });
-    
+    myGamePiece.newPos();
+    myGamePiece.update();
 }
 
 function crashWithGround(groundArray) {
@@ -140,3 +158,18 @@ function crashWithGround(groundArray) {
 //projects
 //links - github etc
 //contact?
+
+//Components
+//Have different arrays for how far back a game component is:
+    //foreground array 2x as long as midground
+    //midground array 2 x as long as background
+    //background array
+//draw in photoshop and add them several times so they can be looped trough.
+//For components that are as wide as the screen, make sure they begin and end at the 
+//same height, so that they can be looped through.
+
+//ERROR
+//got this after adding background image
+// Uncaught TypeError: Cannot read property 'y' of undefined
+// at gamePiece.getGROUND_LEVEL (game.piece.js:98)
+// at updateGameArea (script.js:65)

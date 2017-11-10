@@ -88,13 +88,14 @@ function gamePiece(width, height, color, x, y) {
             }
         });
         //groundPiece with highest groundTop  = GROUND_LEVEL
-        if (currentGroundPieces) {
+        if (currentGroundPieces.length > 0) {
             var highestGround = currentGroundPieces.reduce(function (acc, groundPiece, i) {
                 if (acc.y > groundPiece.y) { //REMEMBER higher y is lower on screen
                     acc = groundPiece;
                 }
                 return acc;
             }, currentGroundPieces[0]);
+            //error on this line after changing the background to an image.
             this.groundLevel = highestGround.y;
         } else {
             this.groundLevel = GROUND_LEVEL;
